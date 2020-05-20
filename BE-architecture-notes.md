@@ -4,6 +4,7 @@
 - "users_businesses"
 - "yelp"
 - "businesses"
+- "sessions" (IN PROGRESS)
 
 ## Routers
 
@@ -14,6 +15,8 @@
 
 - auth
 - users
+- sesssions (IN PROGRESS)
+
 
 ## Steps for new user
 
@@ -218,5 +221,10 @@ Res:
        "message": string
     }
 ```
+
+IN PROGRESS:
+
+NO ENDPOINT FOR SESSIONS TABLE
+The sessions table will store the generated JWTs, with the login and registration endpoints sending the id of the token as a reference point for authorization
 
 NOTE: Response gives the array of their businesses, now without the deleted business
