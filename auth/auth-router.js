@@ -48,7 +48,7 @@ router.post("/register", async (req, res) => {
 
     Users.add(user)
       .then(userN => {
-        const token = getJwtToken(userN.email, userN.password);
+        // const token = getJwtToken(userN.email, userN.password); // DEPRECATED
         res.status(200).json({ userN, token })
       })
       .catch(error => res.status(500).json({ message: 'Unable to retrieve new user.', error }))
@@ -65,7 +65,12 @@ router.post("/login", (req, res) => {
     .then(user => {
       user = user[0];
       if (user && bcrypt.compareSync(password, user.password)) {
-        const token = getJwtToken(user.email, user.password);
+        // const token = getJwtToken(user.email, user.password);  // DEPRECATED
+
+        // SET SESSION VARIABLES
+        req.session.loggedIn = true;
+        req.session.userName = user.userName
+
         res.status(200).json({
           message: `Welcome ${user.first_name}!`,
           id: user.id,
@@ -80,6 +85,20 @@ router.post("/login", (req, res) => {
       res.status(500).json({ message: 'error logging user in!' });
     });
 });
+
+router.get("/logout", (req, res) => {
+  if (req.session) {
+    res.session.destroy(err => {
+      if(err){
+        res.status(500).json({message: 'There was an error logging you out.'})
+      } else {
+        res.status(200).json({message: 'Successfully logged out.'})
+      }
+    })
+  } else {
+    res.status(200).json({message: 'Somehow you were not logged in.'})
+  }
+})
 
 
 
