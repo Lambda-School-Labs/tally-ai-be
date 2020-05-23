@@ -101,17 +101,18 @@ router.get("/logout", (req, res) => {
 })
 
 
+// DEPRECATED IN FAVOR OF SESSIONS - NO LONGER USING JWTs
 
-function getJwtToken(email, password) {
-  const payload = {
-    email,
-    password
-  };
+// function getJwtToken(email, password) {
+//   const payload = {
+//     email,
+//     password
+//   };
 
-  const options = {
-    expiresIn: "7d"
-  };
+//   const options = {
+//     expiresIn: "7d"
+//   };
 
-  return jwt.sign(payload, secret.jwtSecret, options);
-}
+//   return jwt.sign(payload, secret.jwtSecret, options);
+// }
 module.exports = router;
