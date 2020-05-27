@@ -49,6 +49,8 @@ router.post("/register", async (req, res) => {
     Users.add(user)
       .then(userN => {
         // const token = getJwtToken(userN.email, userN.password); // DEPRECATED
+        console.log(userN);
+
         res.status(200).json({ userN, token })
       })
       .catch(error => res.status(500).json({ message: 'Unable to retrieve new user.', error }))
@@ -68,13 +70,13 @@ router.post("/login", (req, res) => {
         // const token = getJwtToken(user.email, user.password);  // DEPRECATED
 
         // SET SESSION VARIABLES
+        req.session.email = email
         req.session.loggedIn = true;
-        req.session.userName = user.userName
 
         res.status(200).json({
           message: `Welcome ${user.first_name}!`,
           id: user.id,
-          token: token
+          // token: token
         });
       } else {
         res.status(401).json({ message: "Invalid Credentials" });

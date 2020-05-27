@@ -16,15 +16,6 @@ const authMiddleware = require("../auth/authenticate-middleware");
 
 const server = express();
 
-
-server.use(helmet());
-server.use(cors());
-server.use(express.json());
-
-server.use("/api/auth", authRouter);
-server.use("/api/users", authMiddleware, usersRouter);
-
-
 // CREATE SESSION VARIABLE AND SESSION STORE WITH COOKIE INFORMATION
 server.use(
     session({
@@ -46,6 +37,24 @@ server.use(
         })
     })
 )
+
+server.use(helmet());
+server.use(cors({
+    credentials: true,
+}));
+server.use(express.json());
+
+server.use("/api/auth", authRouter);
+server.use("/api/users", authMiddleware, usersRouter);
+
+server.use((req, res, next) => {
+    res.set('Access-Control-Allow-Origin', ['http://localhost:3000']);
+    res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
+
+
 
 server.get('/', (req, res) => {
     res.status(200).json(`Sanity Check`);
