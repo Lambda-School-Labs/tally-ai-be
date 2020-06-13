@@ -3,23 +3,25 @@ const request = require('supertest');
 const server = require('../api/server');
 
 const db = require('../database/dbConfig');
+const { JsonWebTokenError } = require('jsonwebtoken');
 
 describe('CRUD Tests', () => {
   beforeAll(async () => {
     await db("users").truncate();
   });
 
-  it("tests are running with DB_ENV set to 'testing'", () => {
+  it("tests are running with DB_ENV set to 'development'", () => {
     expect(process.env.ENVIRONMENT).toBe("development");
   });
 
   describe("auth-router tests", () => {
+    jest.setTimeout(30000)
     describe("POST /api/auth/register", () => {
       it("should return a 201 created status", () => {
         return request(server)
           .post("/api/auth/register")
           .send({
-            email: "robert2@email.com",
+            email: "robert4@email.com",
             password: "password",
             first_name: "first",
             last_name: "last"
@@ -68,6 +70,10 @@ describe('CRUD Tests', () => {
           expect(res.type).toMatch(/json/);
         });
     });
+  });
+
+  afterAll(async () => {
+    await new Promise(resolve => setTimeout(() => resolve(), 10000)); // avoid jest open handle error
   });
 
 })
