@@ -7,7 +7,7 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 
 describe('CRUD Tests', () => {
   beforeAll(async () => {
-    await db("users").truncate();
+    await db.raw('TRUNCATE users RESTART IDENTITY CASCADE')
   });
 
   it("tests are running with DB_ENV set to 'development'", () => {
