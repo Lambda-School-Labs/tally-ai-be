@@ -1,7 +1,6 @@
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
-const cookieSession = require('cookie-session');
 
 // ROUTERS
 const authRouter = require("../auth/auth-router");
@@ -13,12 +12,6 @@ const authMiddleware = require("../auth/authenticate-middleware");
 
 
 const server = express();
-
-// COOKIE SESSION CONFIG
-server.use(cookieSession({
-    name: 'token',
-    keys: ['key1', 'key2'],
-}))
 
 server.use(helmet());
 server.use(cors());
@@ -39,7 +32,7 @@ server.use(function (req, res, next) {
 
 server.use("/api/auth", authRouter);
 server.use("/api/users", authMiddleware, usersRouter);
-server.use('/', googleRouter);
+server.use('/api/google', googleRouter);
 
 server.get('/', (req, res) => {
     res.status(200).json(`Sanity Check`);
