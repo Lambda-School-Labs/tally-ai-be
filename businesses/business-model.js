@@ -3,19 +3,24 @@ const knex = require('knex')
 const bcrypt = require('bcryptjs')
 
 
-const getBusinessses = () => {
-  return db('tallyweb.business')
+const getBusinessses = async () => {
+ const result = await db.raw(
+    `SELECT * FROM tallyweb.business`
+  )
+  return result
+ }
+
+async function findBusinessByID(id) {
+
+  const result = await db.raw(
+    `SELECT * FROM tallyweb.business WHERE business_id = '${id}' `
+  );
+  return result.rows
 }
 
-const getBusiness = (filter) => {
-  return db('tallyweb.business as b')
-  .where(filter)
-  .select('b.id')
-  .first()
-}
 
 
 module.exports = {
-getBusiness,
+findBusinessByID,
 getBusinessses
 }
