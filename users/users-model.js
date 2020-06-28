@@ -5,10 +5,8 @@ const bcrypt = require('bcryptjs');
 module.exports = {
   getUsers,
   getUserId,
-  getBusinesses,
   getFavorites,
-  findByBusinessID,
-  insertBusiness,
+  addUserBusiness,
   insertFavorite,
   update,
   destroy,
@@ -47,17 +45,6 @@ function getUserInfo(id) {
   return db("tallyweb.users as u").where({ "u.id": id }).select("*").first();
 }
 
-function getBusinesses(id) {
-  return db('tallyweb.users as u')
-    .join("tallyweb.users_businesses as ub", "ub.user_id", "u.id")
-    .join("tallyweb.businesses as b", "b.id", "ub.business_id")
-    .join("tallyweb.yelp as yb", "yb.business_id", "b.id")
-    .where({ "u.id": id })
-    .select(
-      "b.id", "b.name", "b.city", "b.state", // businesses
-      "yb.yelp_id", "yb.url", "yb.image_url" // yelp
-    )
-}
 
 
 function getFavorites(id) {
@@ -72,53 +59,55 @@ function getFavorites(id) {
     )
 }
 
-async function findByBusinessID(id) {
-  const result = await db.raw(
-    `SELECT * FROM tallyweb.businesses WHERE id = ${id} `
-  );
-  return result[0];
-}
 
-async function insertBusiness(business, user_id) {
+async function addUserBusiness(business, user_id) {
+  const result = await db(tallyweb.users_businesses)
+    .insert({
+      user_id: user_id,
+      business_id: business
+    })
+    console.log(result);
+    return result
+}
   // Separate yelp data from the rest of the business object
-  const { yelp, ...rest } = business;
+  // const { yelp, ...rest } = business;
 
-  // Check if business already in the DB
-  try {
-    const { exists, biz_id } = await businessExists(yelp.yelp_id);
-    console.log("Business exists? ", exists);
-    console.log("biz_id: ", biz_id);
-    if (exists) {
-      const added = await alreadyAddedBusiness(user_id, biz_id);
-      if (added) {
-        return { message: "Already added this business." }
-      } else {
-        try {
-          await db('tallyweb.users_businesses').insert({ business_id: biz_id, user_id }, "id")
-          return ({ business_id: biz_id, yelp_id: yelp.yelp_id });
-        } catch (error) {
-          return error;
-        }
-      }
+  // // Check if business already in the DB
+  // try {
+  //   const { exists, biz_id } = await businessExists(yelp.yelp_id);
+  //   console.log("Business exists? ", exists);
+  //   console.log("biz_id: ", biz_id);
+  //   if (exists) {
+  //     const added = await alreadyAddedBusiness(user_id, biz_id);
+  //     if (added) {
+  //       return { message: "Already added this business." }
+  //     } else {
+  //       try {
+  //         await db('tallyweb.users_businesses').insert({ business_id: biz_id, user_id }, "id")
+  //         return ({ business_id: biz_id, yelp_id: yelp.yelp_id });
+  //       } catch (error) {
+  //         return error;
+  //       }
+  //     }
 
-    } else {
-      // Insert into businesses table
-      console.log("Adding a new business...");
-      const [business_id] = await db('tallyweb.businesses').insert(rest, "id");
-      console.log("business_id from insert", business_id);
-      // Insert into yelp table after adding business_id
-      const [yelp_id] = await db('tallyweb.yelp').insert({ business_id, ...yelp, }, "id");
-      console.log("yelp_id from insert: ", yelp_id)
-      // Insert into users_businesses table
-      await db('tallyweb.users_businesses').insert({ business_id, user_id }, "id")
+  //   } else {
+  //     // Insert into businesses table
+  //     console.log("Adding a new business...");
+  //     const [business_id] = await db('tallyweb.businesses').insert(rest, "id");
+  //     console.log("business_id from insert", business_id);
+  //     // Insert into yelp table after adding business_id
+  //     const [yelp_id] = await db('tallyweb.yelp').insert({ business_id, ...yelp, }, "id");
+  //     console.log("yelp_id from insert: ", yelp_id)
+  //     // Insert into users_businesses table
+  //     await db('tallyweb.users_businesses').insert({ business_id, user_id }, "id")
 
-      return ({ business_id, yelp_id });
-    }
-  } catch (error) {
-    console.log("Error inserting business:\n", error);
-    return error;
-  }
-}
+  //     return ({ business_id, yelp_id });
+  //   }
+  // } catch (error) {
+  //   console.log("Error inserting business:\n", error);
+  //   return error;
+  // }
+
 
 function update(id, changes) {
   if (changes.preferences) {

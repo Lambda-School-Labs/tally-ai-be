@@ -85,7 +85,7 @@ router.post('/:id/business', middleware, (req, res) => {
 router.post('/:id/favorite', middleware, (req, res) => {
   res.set('Access-Control-Allow-Origin', '*');
   const id = req.params.id;
-  Users.insertFavorite(req.body, id)
+  Users.addUserBusiness(req.body, id)
     .then(async event => {
       try {
         const favorites = await Users.getFavorites(id);
