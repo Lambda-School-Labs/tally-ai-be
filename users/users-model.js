@@ -6,7 +6,8 @@ module.exports = {
   getUsers,
   getUserId,
   getBusinesses,
-  getFavorites,
+  getUserBusinessInfo,
+  // getFavorites,
   // findByBusinessID,
   // insertBusiness,
   addUserBusiness,
@@ -64,19 +65,21 @@ function getBusinesses(id) {
 
 
 function getUserBusinessInfo(id) {
+  console.log(`User ID Passed into getUserBusinessInfo: ${id}`);
+
   return db('tallyweb.users as u')
     .join("tallyweb.users_business as ub", "ub.user_id", "u.id")
-    .join("tallyds.business as f", "f.id", "uf.business_id")
-    .where({ "u.id": id })
+    .join("tallyds.business as f", "ub.business_id", "f.business_id")
     .select(
-      "f.id", "f.name", "f.address", "f.city", "f.zip", 'f.lattitude',
+      "f.business_id", "f.name", "f.address", "f.city", "f.zipcode", 'f.latitude',
       'f.longitude', 'f.cuisine', 'f.review_count', 'f.business_stars')
+      .where({ "ub.user_id": id})
 }
 
 
 async function addUserBusiness(user_id, business_id) {
-  await db('tallyweb.users_business').insert({ user_id: user_id, user_id: user_id })
-  return ({ user_id: user_id, business_id: business_id });
+  await db('tallyweb.users_business').insert({  user_id,  business_id })
+  return ({ user_id, business_id });
 }
 
 
