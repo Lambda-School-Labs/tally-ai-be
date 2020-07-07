@@ -1,7 +1,6 @@
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
-const cookieSession = require('cookie-session');
 
 // ROUTERS
 const authRouter = require("../auth/auth-router");
@@ -14,12 +13,6 @@ const authMiddleware = require("../auth/authenticate-middleware");
 
 
 const server = express();
-
-// COOKIE SESSION CONFIG
-server.use(cookieSession({
-    name: 'token',
-    keys: ['key1', 'key2'],
-}))
 
 server.use(helmet());
 server.use(cors());
