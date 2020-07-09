@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 module.exports = {
   getUsers,
   getUserId,
-  getBusinesses,
   getUserBusinessInfo,
   getUserBusinessCompetitionInfo,
   addUserBusiness,
@@ -27,11 +26,11 @@ async function getUsers(id) {
     console.log("User in users-model:\n", user);
 
     const businesses = await getuserBusinessInfo(id);
-    const favorites = await getUserBusinessCompetitionInfo(id);
+    const competition = await getUserBusinessCompetitionInfo(id);
     return ({
       ...user,
       businesses,
-      favorites
+      competition
     })
   } catch (error) {
     return error;
