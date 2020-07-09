@@ -25,6 +25,7 @@ async function getUsers(id) {
     }
     console.log("User in users-model:\n", user);
 
+
     const businesses = await getUserBusinessInfo(id);
     const competition = await getUserBusinessCompetitionInfo(id);
     return ({
