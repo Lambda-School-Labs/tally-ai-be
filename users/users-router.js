@@ -99,7 +99,9 @@ router.get('/:id/businessinfo', middleware, (req, res) => {
 router.post('/:id/favorite', middleware, (req, res) => {
   res.set('Access-Control-Allow-Origin', '*');
   const id = req.params.id;
+
   Users.addUserCompetition(req.body, id)
+
     .then(async event => {
       try {
         const favorites = await Users.getUserBusinessCompetitionInfo(id);
