@@ -1,10 +1,10 @@
 const express = require("express");
 const Businesses = require("./business-model");
 const router = express.Router();
-const middleware = require("../users/validate-id-middleware");
+const middleware = require("../auth/authenticate-middleware");
 
 
-router.get('/', (req, res ) => {
+router.get('/', middleware, (req, res ) => {
   Businesses.getBusinessses()
   .then(business => {
     res.status(200).json(business.rows)
@@ -16,7 +16,7 @@ router.get('/', (req, res ) => {
   })
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', middleware, async (req, res) => {
   const  {id}  = req.params
 
   await Businesses.findBusinessByID(id)
@@ -35,9 +35,9 @@ router.get('/:id', async (req, res) => {
   })
 })
 
-
-router.get('/search', async (req, res) => {
-  await Businesses.findBusiness(req.body)
+// Search business by Name and City
+router.post('/search', middleware, (req, res) => {
+  Businesses.searchBusiness(req.body)
   .then(business => {
     if(!business) {
       res.status(404).json({error: 'No businesses found with those search parameters'})

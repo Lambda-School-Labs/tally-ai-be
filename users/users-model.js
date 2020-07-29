@@ -24,6 +24,7 @@ function hashPassword(pw) {
 }
 
 function getUserId(filter) {
+  console.log(filter);
   return db("tallyweb.users as u").where(filter).select("u.id").first();
 }
 
