@@ -1,6 +1,7 @@
 const express = require("express");
 
 const Users = require("./users-model");
+const Business = require("../businesses/business-model")
 
 const router = express.Router();
 const helpers = require('./users_helpers');
@@ -107,8 +108,7 @@ router.delete('/:id/business/:bID', middleware, (req, res) => {
       if (!event) {
         res.status(404).json({ message: "No User Business exists by that ID!" });
       } else {
-        const businesses = await Users.getBusinesses(req.params.id);
-        const formattedBusinesses = helpers.formatBusinesses(businesses);
+        const businesses = await Business.searchBusinesses(req.params.id);
         res.status(200).json({ businesses: businesses, message: "User Business Deleted" });
       }
     })
@@ -126,9 +126,6 @@ router.delete('/:id/favorite/:bID', middleware, (req, res) => {
       if (!event) {
         res.status(404).json({ message: "No User Business exists by that ID!" });
       } else {
-        const favorites = await Users.getFavorites(req.params.id);
-        const formattedFavorites = helpers.formatBusinesses(favorites);
-        // TODO: Replace favorites: favorites with favorites: formattedFavorites
         res.status(200).json({ favorites: favorites, message: "User Favorite Deleted" });
       }
     })

@@ -4,9 +4,8 @@ const bcrypt = require('bcryptjs');
 
 module.exports = {
   getUsers,
-  editUser,
   getUserId,
-
+  editUser,
   getUserBusinessInfo,
   getUserBusinessCompetitionInfo,
   addUserBusiness,
@@ -15,7 +14,6 @@ module.exports = {
   removeUsersCompetition,
   alreadyAddedBusiness,
   alreadyCompetition,
-  findById,
   hashPassword
 };
 
