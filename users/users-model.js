@@ -6,6 +6,7 @@ module.exports = {
   getUsers,
   editUser,
   getUserId,
+
   getUserBusinessInfo,
   getUserBusinessCompetitionInfo,
   addUserBusiness,
@@ -79,6 +80,7 @@ function getUserInfo(id) {
   return db("tallyweb.users as u").where({ "u.id": id }).select("*").first();
 }
 
+
 function getUserBusinessInfo(id) {
   return db('tallyweb.users as u')
     .join("tallyweb.users_business as ub", "ub.user_id", "u.id")
@@ -88,6 +90,7 @@ function getUserBusinessInfo(id) {
       'f.longitude', 'f.cuisine', 'f.review_count', 'f.business_stars')
       .where({ "ub.user_id": id})
 }
+
 
 function getUserBusinessCompetitionInfo(id) {
   return db('tallyweb.users as u')
@@ -99,6 +102,7 @@ function getUserBusinessCompetitionInfo(id) {
       .where({ "ub.user_id": id})
 }
 
+
 async function addUserBusiness(user_id, business_id) {
   await db('tallyweb.users_business').insert({  user_id,  business_id })
   return ({ user_id, business_id });
@@ -107,6 +111,8 @@ async function addUserBusiness(user_id, business_id) {
 async function addUserCompetition(user_id, business_id) {
   await db('tallyweb.users_competitors').insert ({user_id, business_id})
 }
+
+
 
 
 function removeUsersBusiness(id) {
