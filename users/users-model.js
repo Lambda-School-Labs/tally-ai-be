@@ -4,17 +4,52 @@ const bcrypt = require('bcryptjs');
 
 module.exports = {
   getUsers,
+  editUser,
   getUserId,
   getUserBusinessInfo,
   getUserBusinessCompetitionInfo,
   addUserBusiness,
   addUserCompetition,
   removeUsersBusiness,
-  removeUsersCompetition
+  removeUsersCompetition,
+  alreadyAddedBusiness,
+  alreadyCompetition,
+  findById,
+  hashPassword
 };
+
+function hashPassword(pw) {
+  return bcrypt.hashSync(pw, 12)
+}
 
 function getUserId(filter) {
   return db("tallyweb.users as u").where(filter).select("u.id").first();
+}
+
+function findById(id) {
+  return db('tallyweb.users')
+  .where({id})
+  .first()
+}
+
+function editUser(id, changes) {
+  console.log(id);
+  console.log(typeof(id))
+  console.log(changes)
+  console.log(changes.first_name);;
+  if(changes.password) {
+    const newPass = hashPassword(changes.password)
+    changes.password = newPass
+    return db('tallyweb.users').update(changes).where(id)
+      .then(() =>{
+      return findById(id)
+    })
+  } else {
+    return db('tallyweb.users').update(changes).where(id)
+      .then(() => {
+      return findById(id)
+    })
+  }
 }
 
 async function getUsers(id) {
@@ -37,6 +72,8 @@ async function getUsers(id) {
     return error;
   }
 }
+
+
 
 function getUserInfo(id) {
   return db("tallyweb.users as u").where({ "u.id": id }).select("*").first();
