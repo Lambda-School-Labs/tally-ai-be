@@ -41,12 +41,12 @@ function editUser(id, changes) {
   if(changes.password) {
     const newPass = hashPassword(changes.password)
     changes.password = newPass
-    return db('tallyweb.users').update(changes).where(id)
+    return db('tallyweb.users').update(changes).where({'id': id})
       .then(() =>{
       return findById(id)
     })
   } else {
-    return db('tallyweb.users').update(changes).where(id)
+    return db('tallyweb.users').update(changes).where({'id': id})
       .then(() => {
       return findById(id)
     })

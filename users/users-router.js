@@ -18,7 +18,6 @@ router.put("/:id", (req, res) => {
   } else {
     Users.editUser(id, changes)
     .then(updated => {
-      delete updated.password
       return res.status(200).json(updated)
     })
     .catch(error => {
