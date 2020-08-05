@@ -108,8 +108,7 @@ router.delete('/:id/business/:bID', middleware, (req, res) => {
       if (!event) {
         res.status(404).json({ message: "No User Business exists by that ID!" });
       } else {
-        const businesses = await Business.searchBusinesses(req.params.id);
-        res.status(200).json({ businesses: businesses, message: "User Business Deleted" });
+        res.status(200).json({ business_id: req.params.bID, message: "User Business Deleted" });
       }
     })
     .catch(err => {
@@ -126,7 +125,7 @@ router.delete('/:id/favorite/:bID', middleware, (req, res) => {
       if (!event) {
         res.status(404).json({ message: "No User Business exists by that ID!" });
       } else {
-        res.status(200).json({ favorites: favorites, message: "User Favorite Deleted" });
+        res.status(200).json({ favorite_id: req.params.bID, message: "User Favorite Deleted" });
       }
     })
     .catch(err => {
