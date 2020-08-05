@@ -18,12 +18,12 @@ async function findBusinessByID(id) {
   return result.rows
 }
 
-async function searchBusiness(params) {
-  const {name, city} = params
+async function searchBusiness(name, city, cuisine) {
   const result = await db('tallyds.business')
     .select('business_id','name', 'address', 'city', 'zipcode', 'cuisine', 'review_count', 'business_stars')
     .where("name", 'ilike', `%${name}%`)
     .andWhere('city', 'ilike', `%${city}%`)
+    .andWhere('cuisine', 'ilike', `%${cuisine}%`)
   return result
 }
 
