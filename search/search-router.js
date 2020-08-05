@@ -5,8 +5,20 @@ const router = express.Router()
 
 // Search business by Name and City
 //TODO: refactor to use query string, and remove middleware for auth check
-router.post('/', (req, res) => {
-  Businesses.searchBusiness(req.body)
+
+
+router.get('/', (req, res) => {
+
+  // console.log("name" in req.query)
+  // console.log(Object.keys(req.query)[0])
+  // console.log(Object.keys(req.query)[1])
+  var name = "name" in req.query ? req.query.name : "";
+  var city = "city" in req.query ? req.query.city : "";
+  var cuisine = "cuisine" in req.query ? req.query.cuisine : "";
+
+  console.log(name, city, cuisine)
+
+  Businesses.searchBusiness(name, city, cuisine)
   .then(business => {
     if(business.length < 1) {
       res.status(404).json({message: 'No businesses found with those search parameters'})
@@ -22,7 +34,7 @@ router.post('/', (req, res) => {
 
 
 // Return all business names only in array.
-router.get('/',(req,res) => {
+router.get('/names',(req,res) => {
 
   Businesses.searchAllBusinessName()
     .then(businesses => {
