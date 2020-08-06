@@ -35,17 +35,8 @@ router.get('/:id', middleware, async (req, res) => {
   })
 })
 
-// Search business by Name and City
-router.post('/search', middleware, (req, res) => {
-  Businesses.searchBusiness(req.body)
-  .then(business => {
-    if(!business) {
-      res.status(404).json({error: 'No businesses found with those search parameters'})
-    }
-    else{
-      res.status(200).json(business)
-    }
-  })
-})
+
+//upload images to S3 and store imageURL in database
+
 
 module.exports = router
