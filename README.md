@@ -58,6 +58,7 @@ TODO: Create a testing database and set up testing environment. Configure existi
 - Knex
 - JWT
 - bcrypt.js
+- Multer/MulterS3
 
 ## Endpoints
 
@@ -68,17 +69,26 @@ TODO: Create a testing database and set up testing environment. Configure existi
 | POST   | `/api/auth/register`    | all users      | Creates a new user. Returns a token and user id. |
 | POST   | `/api/auth/login`       | all users      | Logs a user in. Returns a token and a user id.   |
 
-#### User / Business Routes
+#### User Routes
 
 | Method | Endpoint                | Access Control         | Description                                                                   |
 | ------ | ----------------------- | ---------------------- | ----------------------------------------------------------------------------- |
-| GET    | `/users/:id`            | logged-in user with id | Returns user, business, and favorites (competitor) info.                      |
+| GET    | `/users/:id`            | logged-in user with id | Returns user info.                      |
 | PUT    | `/users/:id`            | logged-in user with id | Updates user information.                                                     |
-| DELETE | `/users/:id`            | logged-in user with id | Deletes user.                                                                 |
-| POST   | `/users/:id/business`   | logged-in user with id | Adds a new business to the user's account. Returns new list of businesses.    |
-| POST   | `/users/:id/favorite`   | logged-in user with id | Adds a new competitor to the user's account. Returns new list of competitors. |
-| DELETE | `/users/:id/business`   | logged-in user with id | Deletes an existing business from a user's account.                           |
-| DELETE | `/users/:id/favorite`   | logged-in user with id | Deletes an existing competitor from a user's account.                         |
+| GET    | `/users/:id/business`   | logged-in user with id | Returns users owned businesses and competitors info with details from DS Table                                               |
+| POST   | `/users/:id/business`   | logged-in user with id | Adds business to a user's account.                           |
+| POST   | `/users/:id/favorite`   | logged-in user with id | Adds competitor to a user's account.                         |
+| DELETE | `/users/:id/favorite`   | logged-in user with id | Removes competitor from a user's account.                         |
+| DELETE | `/users/:id/favorite`   | logged-in user with id | Removes competitor from a user's account.                         |
+
+#### Business Routes
+
+| Method | Endpoint                | Access Control         | Description                                                                   |
+| ------ | ----------------------- | ---------------------- | ----------------------------------------------------------------------------- |
+| GET    | `business/`             | logged-in user with id | Returns ALL businesses                                                        |
+| GET    | `/business/:id`         | logged-in user with id | Returns business information based on DS Business Table Information           |
+| POST   | `/business/:id`         | logged-in user with id | Calls MulterS3 Functionality in order to upload business image (Not fully implemented)                                                                |
+
 
 # Data Model
 
@@ -94,34 +104,11 @@ TODO: Create a testing database and set up testing environment. Configure existi
   email: TEXT
   password: TEXT
   preferences: JSON
+  type: TEXT
+  google_id: TEXT
 }
 ```
-
-#### BUSINESSES
-
----
-
-```
-{
-  id: INTEGER
-  name: TEXT
-  city: TEXT
-  state: TEXT
-}
-```
-
-#### FAVORITES
-
----
-
-```
-{
-  id: INTEGER
-  name: TEXT
-  city: TEXT
-  state: TEXT
-}
-```
+###### Note that type and google_id are auto-populated via the Front-End Google oAuth
 
 #### USERS_BUSINESSES
 
@@ -129,23 +116,29 @@ TODO: Create a testing database and set up testing environment. Configure existi
 
 ```
 {
-  id: INTEGER
-  user_id: INTEGER
-  business_id: INTEGER
+ id: TEXT
+ user_id: INT
+ business_id: TEXT
+
 }
 ```
+###### user_id and business_id are relational to the users table, and DS business table, respectively
 
-#### USERS_FAVORITES
+#### USERS_COMPETITORS
 
 ---
 
 ```
 {
-  id: INTEGER
-  user_id: INTEGER
-  business_id: INTEGER
+ id: TEXT
+ user_id: INT
+ business_id: TEXT
+
 }
 ```
+###### user_id and business_id are relational to the users table, and DS business table, respectively
+
+
 
 
 
@@ -178,11 +171,25 @@ PORT=5000
 
 NPM_CONFIG_UNSAFE_PERM=true
 
-DB_PRODUCTION_HOST=********
-DB_PRODUCTION_USER=********
-DB_PRODUCTION_PW=********
-DATABASE_PRODUCTION=********
-DB_PRODUCTION_PORT=********
+DB_PRODUCTION_HOST=**********
+DB_PRODUCTION_USER=**********
+DB_PRODUCTION_PW=************
+DATABASE_PRODUCTION=*********
+DB_PRODUCTION_PORT=**********
+
+
+CLIENT_ID=**********
+PROJECT_ID=*********
+AUTH_URI=https://accounts.google.com/o/oauth2/auth
+TOKEN_URI=https://oauth2.googleapis.com/token
+AUTH_PROVIDER_x509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
+CLIENT_SECRET=******
+REDIRECT_URIS=http://localhost:6000/google/callback
+
+AWS_SECRET=*****************
+AWS_ACCESS_KEY_ID=**********
+AWS_SECRET_ACCESS_KEY=******
+AWS_IMAGE_BUCKET=tally-ai-image-store
 ```
 
 ## Contributing
